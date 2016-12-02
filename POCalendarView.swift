@@ -12,8 +12,20 @@ import Cocoa
 class POCalendarView : NSView {
     
     
-    var duration = 120;
-    
+    var duration = 120
+    var year = 1900
+    var month = 1
+    var day = 1
+    var text: String {
+        get{
+            return "\(year)/\(month)/\(day)"
+        }
+    }
+    var stringValue: String {
+        get{
+            return text
+        }
+    }
     
     @IBOutlet var _calendarView: NSView!
     @IBOutlet weak var _year: NSPopUpButton!
@@ -24,7 +36,45 @@ class POCalendarView : NSView {
     private let _dateformatterja = DateFormatter()
 
     private var _warekiDictionary = [String:String]()
+
+    @IBAction func onSelected(_ sender: NSPopUpButton) {
+        
+        let num = sender.selectedItem?.representedObject! as! Int
+        
+        switch sender.tag {
+        case 0:
+            year = num
+            break
+        case 1:
+            month = num
+            break
+        case 2:
+            day = num
+            break
+        default:
+            break
+        }
+        
+    }
     
+    private func initMonth() {
+        
+        _month.removeAllItems()
+        let now =  _dateformatter.calendar.dateComponents([.year, .month], from: Date())
+        var m = 12
+        if(now.year == self.year) {
+            m = now.month!
+        }
+        while(m > 0) {
+            let item = NSMenuItem()
+            item.title = " \(m) 月"
+            item.representedObject = m
+            _month.menu?.addItem(item)
+            
+            m -= 1
+        }
+        
+    }
     
     private func initYears() {
         
@@ -36,7 +86,11 @@ class POCalendarView : NSView {
         
         for k in keys {
             let str = " \(k) 年（\(_warekiDictionary["\(k)"]!)）"
-            _year.addItem(withTitle: str)
+            let item = NSMenuItem()
+            item.title = str
+            item.representedObject = Int(k)
+            _year.menu?.addItem(item)
+//            _year.addItem(withTitle: str)
         }
         
         
@@ -111,8 +165,15 @@ class POCalendarView : NSView {
         // 年号辞書作成
         initWarekiDictionary()
         
-        // 年一覧更新
+        // 年月一覧更新
         initYears()
+        initMonth()
+
+
+        // 初期時にだけ、現在の日付を適用
+        _year.selectItem(at: 0)
+        _month.selectItem(at: 0)
+        _day.selectItem(at: 0)
     }
     
     // shared init
