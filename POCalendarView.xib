@@ -51,6 +51,9 @@
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="onSelected:" target="-2" id="1xY-5J-5CR"/>
+                    </connections>
                 </popUpButton>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="05M-p1-iHe">
                     <rect key="frame" x="236" y="-3" width="76" height="26"/>

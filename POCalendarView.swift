@@ -13,9 +13,9 @@ class POCalendarView : NSView {
     
     
     var duration = 120
-    var year = 1900
-    var month = 1
-    var day = 1
+    var year = 0
+    var month = 0
+    var day = 0
     var text: String {
         get{
             return "\(year)/\(month)/\(day)"
@@ -56,6 +56,26 @@ class POCalendarView : NSView {
         }
         
     }
+
+    private func initDay() {
+        
+        _day.removeAllItems()
+        let today = Date()
+        let now =  _dateformatter.calendar.dateComponents([.year, .month, .day], from: today)
+        let range  = _dateformatter.calendar.range(of: .day, in: .month, for: today)
+        var d = (range?.count)! // the lastday of this month
+        if(now.year == self.year && now.month == self.month) {
+            d = now.day!
+        }
+        while(d > 0) {
+            let item = NSMenuItem()
+            item.title = " \(d) 日"
+            item.representedObject = d
+            _day.menu?.addItem(item)
+            
+            d -= 1
+        }
+    }
     
     private func initMonth() {
         
@@ -73,7 +93,8 @@ class POCalendarView : NSView {
             
             m -= 1
         }
-        
+
+        initDay()
     }
     
     private func initYears() {
@@ -93,6 +114,7 @@ class POCalendarView : NSView {
 //            _year.addItem(withTitle: str)
         }
         
+        initMonth()
         
 //        for c in _warekiDictionary {
 //            let str = "\(c.key)年 （\(c.value)）"
@@ -165,10 +187,14 @@ class POCalendarView : NSView {
         // 年号辞書作成
         initWarekiDictionary()
         
+        // 今日が初期値
+        let now = _dateformatter.calendar.dateComponents([.year, .month, .day], from: Date())
+        self.year = now.year!
+        self.month = now.month!
+        self.day = now.day!
+        
         // 年月一覧更新
-        initYears()
-        initMonth()
-
+        initYears() //　すべて連続で初期化される
 
         // 初期時にだけ、現在の日付を適用
         _year.selectItem(at: 0)
