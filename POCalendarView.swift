@@ -18,7 +18,7 @@ class POCalendarView : NSView {
     var day = 0
     var text: String {
         get{
-            return "\(year)/\(month)/\(day)"
+            return "\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
         }
     }
     var stringValue: String {
@@ -44,9 +44,11 @@ class POCalendarView : NSView {
         switch sender.tag {
         case 0:
             year = num
+            initMonth()
             break
         case 1:
             month = num
+            initDay()
             break
         case 2:
             day = num
@@ -54,7 +56,6 @@ class POCalendarView : NSView {
         default:
             break
         }
-        
     }
 
     private func initDay() {
@@ -72,6 +73,9 @@ class POCalendarView : NSView {
             item.title = " \(d) 日"
             item.representedObject = d
             _day.menu?.addItem(item)
+            if( day == d) {
+                _day.select(item)
+            }
             
             d -= 1
         }
@@ -82,7 +86,7 @@ class POCalendarView : NSView {
         _month.removeAllItems()
         let now =  _dateformatter.calendar.dateComponents([.year, .month], from: Date())
         var m = 12
-        if(now.year == self.year) {
+        if(now.year == year) {
             m = now.month!
         }
         while(m > 0) {
@@ -90,10 +94,13 @@ class POCalendarView : NSView {
             item.title = " \(m) 月"
             item.representedObject = m
             _month.menu?.addItem(item)
+            if( month == m) {
+                _month.select(item)
+            }
             
             m -= 1
         }
-
+        
         initDay()
     }
     
@@ -189,9 +196,9 @@ class POCalendarView : NSView {
         
         // 今日が初期値
         let now = _dateformatter.calendar.dateComponents([.year, .month, .day], from: Date())
-        self.year = now.year!
-        self.month = now.month!
-        self.day = now.day!
+        year = now.year!
+        month = now.month!
+        day = now.day!
         
         // 年月一覧更新
         initYears() //　すべて連続で初期化される
